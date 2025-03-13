@@ -8,7 +8,12 @@ const port = 5000;
 app.use(cors());
 
 const initialData = {
-  strikes: Array.from({ length: 75 }, (_, i) => ({ strike: 20000 + i * 100, token: `token${i}`, price: 100 + Math.random() * 100 })),
+  strikes: Array.from({ length: 75 }, (_, i) => ({
+    strike: 20000 + i * 100,
+    token: `token${i}`,
+    callPrice: 100 + Math.random() * 100,
+    putPrice: 100 + Math.random() * 100,
+  })),
   underlyingPrice: 22000 + Math.random() * 1000
 };
 
@@ -30,7 +35,8 @@ wss.on('connection', (ws) => {
     if (ws.readyState === ws.OPEN) {
       const updatedStrikes = initialData.strikes.map((strike) => ({
         ...strike,
-        currentPrice: strike.price * (1 + (Math.random() - 0.5) * 0.1)
+        callCurrentPrice: strike.callPrice * (1 + (Math.random() - 0.5) * 0.1),
+        putCurrentPrice: strike.putPrice * (1 + (Math.random() - 0.5) * 0.1)
       }));
       ws.send(JSON.stringify({ strikes: updatedStrikes, underlyingPrice: initialData.underlyingPrice * (1 + (Math.random() - 0.5) * 0.1) }));
     }
