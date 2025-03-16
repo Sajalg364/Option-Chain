@@ -9,7 +9,7 @@ const App =()=> {
     <div className="container mx-auto p-4">
       <Router>
         <Routes>
-          <Route path="/" element={<Home />} />
+          <Route path="/" element={<OptionChain />} />
           <Route path="/option-chain" element={<OptionChain />} />
           <Route path="/realtime" element={<RealtimeInspectorWrapper />} />
         </Routes>

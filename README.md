@@ -7,14 +7,24 @@ This project is a complete implementation of a Realtime Option Chain using Vite,
 ```
 realtime-option-chain/
 ├── backend/
-│   ├── index.js
-│   └── package.json
+|   ├── controllers/
+|   │   └── optionChainController.js
+|   ├── models/
+|   │   └── optionChainModel.js
+|   ├── routes/
+|   │   └── optionChainRoutes.js
+|   ├── services/
+|   │   └── webSocketService.js
+|   └── index.js
+|
 ├── frontend/
 │   ├── src/
 │   │   ├── components/
-│   │   │   ├── OptionChain.js
-│   │   │   ├── RealtimeInspector.js
-│   │   │   └── WebSocketProvider.js
+|   |   |   ├── common/
+|   │   |   |   └── breadCrumbs.jsx
+│   │   │   ├── Home.jsx
+│   │   │   ├── OptionChain.jsx
+│   │   │   └── RealtimeInspector.jsx
 │   │   ├── App.jsx
 │   │   ├── index.css
 │   │   ├── main.jsx
@@ -60,7 +70,7 @@ realtime-option-chain/
    npm run dev
    ```
 
-4. Open your browser and go to `http://localhost:3000`.
+4. Open your browser and go to `http://localhost:5173`.
 
 ## Features
 
@@ -74,16 +84,10 @@ realtime-option-chain/
   - Connect/Close the WebSocket connection.
   - Show the current state of the WebSocket connection.
 
-## Recommended for Stronger Submission
+## Optimization & Performance
 
 - Reconnect WebSocket on lost connections.
 - Prevent layout shifts on the frontend.
 - Differentiate between positive and negative changes in price.
 - Incorporate color to differentiate between at-the-money, in-the-money, and out-of-the-money strikes.
-- Run WebSocket as a Web Worker to improve performance.
 - Improve performance via creating a virtualized view.
-- Conserve network bandwidth used by the real-time connection.
-
-## License
-
-This project is licensed under the MIT License.
