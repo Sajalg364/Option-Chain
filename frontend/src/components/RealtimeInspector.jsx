@@ -6,9 +6,13 @@ const WebSocketContext = createContext();
 const WebSocketProvider = ({ children }) => {
   const [ws, setWs] = useState(null);
   const [data, setData] = useState(null);
-  const [isConnected, setIsConnected] = useState(true);
+  const [isConnected, setIsConnected] = useState(false);
   const [subscribedTokens, setSubscribedTokens] = useState([]);
   const [tokenInput, setTokenInput] = useState('');
+
+   useEffect(() => {
+      setIsConnected(true);
+    }, []);
 
   const connect = () => {
     const socket = new WebSocket('ws://localhost:5000');
@@ -43,7 +47,7 @@ const WebSocketProvider = ({ children }) => {
         ws.close();
       }
     };
-  }, []); // Empty dependency array to run only once
+  }, [isConnected]); // Empty dependency array to run only once
 
   const disconnect = () => {
     if (ws) {

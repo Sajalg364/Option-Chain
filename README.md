@@ -1,6 +1,6 @@
 # Realtime Option Chain
 
-This project is a comprehensive implementation of a Realtime Option Chain using Vite, React, TailwindCSS for the frontend, and Node.js for the backend. The application displays a depth of 75 strikes and updates real-time data every 1 second through WebSockets.
+This project is a comprehensive implementation of a Realtime Option Chain using Vite, React, TailwindCSS for the frontend, and Node.js for the backend. The application displays a depth of 75 strikes and updates real-time data every 0.2 second through WebSockets.
 
 ## Project Structure
 
