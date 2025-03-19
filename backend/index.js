@@ -19,7 +19,7 @@ const wss = new WebSocket.Server({ server });
 wss.on('connection', (ws) => {
   console.log('WebSocket connection established');
 
-  const interval = setInterval(() => webSocketService.sendRandomData(ws), 500);
+  const interval = setInterval(() => webSocketService.sendRandomData(ws), 200);
 
   ws.on('close', () => {
     clearInterval(interval);

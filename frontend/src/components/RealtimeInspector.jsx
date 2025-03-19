@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext, createContext } from 'react';
+import React, { useState, useEffect, useContext, createContext, useRef } from 'react';
 import Breadcrumb from './common/breadCrumbs';
 
 const WebSocketContext = createContext();
@@ -9,6 +9,8 @@ const WebSocketProvider = ({ children }) => {
   const [isConnected, setIsConnected] = useState(false);
   const [subscribedTokens, setSubscribedTokens] = useState([]);
   const [tokenInput, setTokenInput] = useState('');
+
+  const reconnectTimeout = useRef(null);
 
    useEffect(() => {
       setIsConnected(true);
@@ -28,32 +30,39 @@ const WebSocketProvider = ({ children }) => {
     socket.onclose = () => {
       setIsConnected(false);
       console.log('WebSocket disconnected');
-      setTimeout(() => {
-        if (isConnected) {
-          connect();
-        }
-      }, 5000);
     };
     setWs(socket);
+    // Clear any existing timeout if manual connection happens
+    if (reconnectTimeout.current) {
+      clearTimeout(reconnectTimeout.current);
+      reconnectTimeout.current = null;
+    }
   };
 
   useEffect(() => {
     if (isConnected) {
       connect();
+      return () => {
+        if (ws) {
+          ws.close();
+          setIsConnected(false);
+        }
+      };
     }
-
-    return () => {
-      if (ws) {
-        ws.close();
-      }
-    };
-  }, [isConnected]); // Empty dependency array to run only once
+  }, [isConnected]); 
 
   const disconnect = () => {
     if (ws) {
       ws.close();
+      setIsConnected(false);
     }
-    setIsConnected(false);
+    // Set a timeout to reconnect after 5 seconds
+    if (!reconnectTimeout.current) {
+      reconnectTimeout.current = setTimeout(() => {
+        connect();
+        setIsConnected(true);
+      }, 5000); // Attempt to reconnect after 5 seconds
+    }
   };
 
   const subscribeToken = () => {

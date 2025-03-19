@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext, createContext, useCallback } from 'react';
+import React, { useState, useEffect, useContext, createContext, useCallback, useRef } from 'react';
 import { FixedSizeList as List } from 'react-window';
 import Breadcrumb from './common/breadCrumbs';
 
@@ -9,6 +9,7 @@ const WebSocketProvider = ({ children }) => {
   const [ws, setWs] = useState(null);
   const [data, setData] = useState(null);
   const [isConnected, setIsConnected] = useState(false);
+  const reconnectTimeout = useRef(null);
 
   useEffect(() => {
     setIsConnected(true);
@@ -29,32 +30,40 @@ const WebSocketProvider = ({ children }) => {
       if (isConnected) {
         setIsConnected(false);
         console.log('WebSocket disconnected');
-        setTimeout(() => {
-          if (isConnected) {
-            connect();
-          }
-        }, 5000); // Attempt to reconnect after 5 seconds
       }
     };
     setWs(socket);
+    // Clear any existing timeout if manual connection happens
+    if (reconnectTimeout.current) {
+      clearTimeout(reconnectTimeout.current);
+      reconnectTimeout.current = null;
+    }
   };
 
   useEffect(() => {
     if (isConnected) {
       connect();
+      return () => {
+        if (ws) {
+          ws.close();
+          setIsConnected(false);
+        }
+      };
     }
-    return () => {
-      if (ws) {
-        ws.close();
-      }
-    };
   }, [isConnected]);
 
   const disconnect = () => {
     if (ws) {
       ws.close();
+      setIsConnected(false);
     }
-    setIsConnected(false);
+    // Set a timeout to reconnect after 5 seconds
+    if (!reconnectTimeout.current) {
+      reconnectTimeout.current = setTimeout(() => {
+        connect();
+        setIsConnected(true);
+      }, 5000); // Attempt to reconnect after 5 seconds
+    }
   };
 
   return (
@@ -113,7 +122,7 @@ const OptionChain = () => {
             </span>
           </div>
         </div>
-        
+
         <div className="overflow-auto">
           <div className="min-w-full bg-white">
             <div className="bg-gray-800 text-white flex border-2 border-gray-500">
